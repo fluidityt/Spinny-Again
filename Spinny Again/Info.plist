@@ -36,6 +36,29 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>Questions</key>
+	<dict>
+		<key>q2</key>
+		<dict>
+			<key>New item</key>
+			<string></string>
+			<key>New item - 3</key>
+			<string></string>
+			<key>New item - 4</key>
+			<string></string>
+			<key>New item - 2</key>
+			<string></string>
+		</dict>
+		<key>q1</key>
+		<array>
+			<string>funimage.png</string>
+			<string>which car is most fun?</string>
+			<string>bmw</string>
+			<string>porsche</string>
+		</array>
+	</dict>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

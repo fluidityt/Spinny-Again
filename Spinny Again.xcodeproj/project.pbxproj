@@ -15,6 +15,7 @@
 		C17897F21E01E84F00E6B868 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C17897F01E01E84F00E6B868 /* Main.storyboard */; };
 		C17897F41E01E84F00E6B868 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C17897F31E01E84F00E6B868 /* Assets.xcassets */; };
 		C17897F71E01E84F00E6B868 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C17897F51E01E84F00E6B868 /* LaunchScreen.storyboard */; };
+		C17898001E01EA3A00E6B868 /* TODO.rtf in Resources */ = {isa = PBXBuildFile; fileRef = C17897FF1E01EA3A00E6B868 /* TODO.rtf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		C17897F31E01E84F00E6B868 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C17897F61E01E84F00E6B868 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C17897F81E01E84F00E6B868 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C17897FF1E01EA3A00E6B868 /* TODO.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; name = TODO.rtf; path = "Spinny Again/TODO.rtf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,8 +46,8 @@
 		C17897DA1E01E84F00E6B868 = {
 			isa = PBXGroup;
 			children = (
+				C17897FF1E01EA3A00E6B868 /* TODO.rtf */,
 				C17897E51E01E84F00E6B868 /* Spinny Again */,
-				C17897E41E01E84F00E6B868 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -55,22 +57,32 @@
 				C17897E31E01E84F00E6B868 /* Spinny Again.app */,
 			);
 			name = Products;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		C17897E51E01E84F00E6B868 /* Spinny Again */ = {
 			isa = PBXGroup;
 			children = (
-				C17897E61E01E84F00E6B868 /* AppDelegate.swift */,
+				C17897FE1E01EA1F00E6B868 /* junk */,
 				C17897E81E01E84F00E6B868 /* GameScene.sks */,
-				C17897EA1E01E84F00E6B868 /* Actions.sks */,
 				C17897EC1E01E84F00E6B868 /* GameScene.swift */,
+				C17897F31E01E84F00E6B868 /* Assets.xcassets */,
+			);
+			path = "Spinny Again";
+			sourceTree = "<group>";
+		};
+		C17897FE1E01EA1F00E6B868 /* junk */ = {
+			isa = PBXGroup;
+			children = (
+				C17897E41E01E84F00E6B868 /* Products */,
+				C17897E61E01E84F00E6B868 /* AppDelegate.swift */,
+				C17897EA1E01E84F00E6B868 /* Actions.sks */,
 				C17897EE1E01E84F00E6B868 /* GameViewController.swift */,
 				C17897F01E01E84F00E6B868 /* Main.storyboard */,
-				C17897F31E01E84F00E6B868 /* Assets.xcassets */,
 				C17897F51E01E84F00E6B868 /* LaunchScreen.storyboard */,
 				C17897F81E01E84F00E6B868 /* Info.plist */,
 			);
-			path = "Spinny Again";
+			name = junk;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -105,7 +117,7 @@
 				TargetAttributes = {
 					C17897E21E01E84F00E6B868 = {
 						CreatedOnToolsVersion = 8.1;
-						DevelopmentTeam = UT65PER42P;
+						DevelopmentTeam = 57ES2MLM4Y;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -135,6 +147,7 @@
 			files = (
 				C17897F21E01E84F00E6B868 /* Main.storyboard in Resources */,
 				C17897E91E01E84F00E6B868 /* GameScene.sks in Resources */,
+				C17898001E01EA3A00E6B868 /* TODO.rtf in Resources */,
 				C17897F41E01E84F00E6B868 /* Assets.xcassets in Resources */,
 				C17897F71E01E84F00E6B868 /* LaunchScreen.storyboard in Resources */,
 				C17897EB1E01E84F00E6B868 /* Actions.sks in Resources */,
@@ -273,8 +286,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = UT65PER42P;
+				DEVELOPMENT_TEAM = 57ES2MLM4Y;
 				INFOPLIST_FILE = "Spinny Again/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Ziggly.Spinny-Again";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -286,8 +300,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = UT65PER42P;
+				DEVELOPMENT_TEAM = 57ES2MLM4Y;
 				INFOPLIST_FILE = "Spinny Again/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Ziggly.Spinny-Again";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -314,6 +329,7 @@
 				C17897FD1E01E84F00E6B868 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

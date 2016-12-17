@@ -9,81 +9,153 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
-    
-    private var label : SKLabelNode?
-    private var spinnyNode : SKShapeNode?
-    
-    override func didMove(to view: SKView) {
-        
-        // Get label node from scene and store it for use later
-        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-        if let label = self.label {
-            label.alpha = 0.0
-            label.run(SKAction.fadeIn(withDuration: 2.0))
-        }
-        
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
-        
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 2.5
-            
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(M_PI), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
-        }
-    }
-    
-    
-    func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.green
-            self.addChild(n)
-        }
-    }
-    
-    func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.blue
-            self.addChild(n)
-        }
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.red
-            self.addChild(n)
-        }
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-        }
-        
-        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
-    }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
-    }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    }
-    
-    
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
-    }
+
+	class TouchMeSprite: SKSpriteNode {
+
+		// This is used for when another node is pressed... the animation THIS node will run:
+		var personalAnimation: SKAction?
+
+		// This is used when THIS node is clicked... the below nodes will run their `personalAnimation`:
+		var othersToAnimate: [TouchMeSprite]?
+
+		override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+
+			// Early exit:
+			guard let sprites = othersToAnimate else {
+				print("No sprites to animate. Error?")
+				return
+			}
+
+			for sprite in sprites {
+
+				// Early exit:
+				if sprite.scene == nil {
+					print("sprite was nil, not running animation")
+					return
+				}
+
+				// Early exit:
+				guard let animation = sprite.personalAnimation else {
+					print("sprite had no animation")
+					return
+				}
+
+				sprite.run(animation)
+			}
+		}
+	}
+
+func didMoveToView() {
+
+	let lightSwitch = TouchMeSprite(color: .yellow, size: CGSize(width: 50, height: 200))
+	lightSwitch.position = CGPoint(x: 50, y: 50)
+
+
 }
+
+class GameScene: SKScene {
+
+	var sensitivity = (min: 0.05, max: 0.45, cur: 0.2)
+
+	func rotateClockwise() {
+
+	 childNode(withName: "base")?.zRotation -= CGFloat(sensitivity.cur)
+	}
+
+	func rotateCounterClock() {
+		childNode(withName: "base")?.zRotation += CGFloat(sensitivity.cur)
+	}
+
+	override func didMove(to: SKView) {
+
+	func doIt() {
+
+		//		let circle = SKShapeNode(circleOfRadius: 100)
+
+		circle.fillColor = .white
+		let dot = SKSpriteNode(texture: view?.texture(from: circle)!)
+		dot.position.y -= 267
+		addChild(dot)
+	}
+
+		doIt()
+		// Bulb:
+
+		let lightBulb = TouchMeSprite(color: .black, size: CGSize(width: 100, height: 100))
+		// Lightbulb will turn on when you click lightswitch:
+		lightBulb.personalAnimation = SKAction.colorize(with: .yellow, colorBlendFactor: 1, duration: 0)
+
+		lightBulb.position = CGPoint(x: 0, y: 400)
+		lightBulb.isUserInteractionEnabled = true
+		addChild(lightBulb)
+
+
+		// Switch:
+
+		let lightSwitch = TouchMeSprite(color: .gray, size: CGSize(width: 25, height: 50))
+		// Lightswitch will turn on lightbulb:
+		lightSwitch.othersToAnimate = [lightBulb]
+
+		lightSwitch.isUserInteractionEnabled = true
+		lightSwitch.position = CGPoint(x: 0, y: 250)
+		addChild(lightSwitch)
+	}
+
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+
+	}
+
+
+	// MARK: - Math:
+
+
+
+	var toucherCount = [0]
+	var toucherSum = 0
+
+	var lastFramesTime = TimeInterval()
+	var dTime = TimeInterval()
+
+	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+
+		let x = abs(
+			touches.first!.location(in: self).x
+			- touches.first!.previousLocation(in: self).x
+		)
+
+		let y = x / frame.width
+		var zz = y / CGFloat(dTime)
+		zz/=2
+
+		let z = Double(zz)
+		if z > sensitivity.max { sensitivity.cur = sensitivity.max }
+		else if z < sensitivity.min { sensitivity.cur = sensitivity.min }
+		else { sensitivity.cur = z }
+
+		toucherCount.append((1))
+		toucherSum += Int(z)
+		print( toucherSum / toucherCount.count)
+
+		touches.first!.location(in: self).x > touches.first!.previousLocation(in: self).x // Move right
+		? rotateClockwise()
+		: rotateCounterClock()
+	}
+
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		toucherCount = []
+		toucherSum = 0
+	}
+
+
+	var firstrun = true
+
+	override func update(_ currentTime: TimeInterval) {
+
+		if firstrun { lastFramesTime = currentTime; firstrun = false; return }
+		dTime = currentTime - lastFramesTime
+		lastFramesTime = currentTime
+	}
+}
+
+
+
