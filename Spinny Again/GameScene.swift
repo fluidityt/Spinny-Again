@@ -10,6 +10,8 @@ import SpriteKit
 import GameplayKit
 
 
+
+
 	class TouchMeSprite: SKSpriteNode {
 
 		// This is used for when another node is pressed... the animation THIS node will run:
@@ -45,60 +47,68 @@ import GameplayKit
 		}
 	}
 
-func didMoveToView() {
-
-	let lightSwitch = TouchMeSprite(color: .yellow, size: CGSize(width: 50, height: 200))
-	lightSwitch.position = CGPoint(x: 50, y: 50)
-
-
-}
 
 class GameScene: SKScene {
 
 	var sensitivity = (min: 0.05, max: 0.45, cur: 0.2)
 
-	func rotateClockwise() {
 
-	 childNode(withName: "base")?.zRotation -= CGFloat(sensitivity.cur)
+ func clockwise() {
+
+	childNode(withName: "base")?.zRotation -= CGFloat(sensitivity.cur)
 	}
 
-	func rotateCounterClock() {
-		childNode(withName: "base")?.zRotation += CGFloat(sensitivity.cur)
+ func counterClockwise() {
+	childNode(withName: "base")?.zRotation += CGFloat(sensitivity.cur)
 	}
+
 
 	override func didMove(to: SKView) {
 
-	func doIt() {
 
-		//		let circle = SKShapeNode(circleOfRadius: 100)
+		func doIt() {
+			func initFromEditor() -> (number: SKLabelNode, slider: SKSpriteNode, ball: SKSpriteNode) {
+				return (number: childNode(withName: "speed")!.childNode(withName: "number") as! SKLabelNode,
+				        slider: childNode(withName: "accel slider") as! SKSpriteNode,
+				        ball:		childNode(withName: "ball") as! SKSpriteNode
+				)
+			}
 
-		circle.fillColor = .white
-		let dot = SKSpriteNode(texture: view?.texture(from: circle)!)
-		dot.position.y -= 267
-		addChild(dot)
-	}
+			let (num, slider, ball) = initFromEditor()
+
+			let circle = SKShapeNode(circleOfRadius: 50)
+			circle.fillColor = .white
+			let dot = SKSpriteNode(texture: view?.texture(from: circle)!)
+			dot.position.y -= 267
+
+			addChild(dot)
+		}
 
 		doIt()
-		// Bulb:
 
-		let lightBulb = TouchMeSprite(color: .black, size: CGSize(width: 100, height: 100))
-		// Lightbulb will turn on when you click lightswitch:
-		lightBulb.personalAnimation = SKAction.colorize(with: .yellow, colorBlendFactor: 1, duration: 0)
+		func makeLights() {
+			// Bulb:
 
-		lightBulb.position = CGPoint(x: 0, y: 400)
-		lightBulb.isUserInteractionEnabled = true
-		addChild(lightBulb)
+			let lightBulb = TouchMeSprite(color: .black, size: CGSize(width: 100, height: 100))
+			// Lightbulb will turn on when you click lightswitch:
+			lightBulb.personalAnimation = SKAction.colorize(with: .yellow, colorBlendFactor: 1, duration: 0)
+
+			lightBulb.position = CGPoint(x: 0, y: 400)
+			lightBulb.isUserInteractionEnabled = true
+			addChild(lightBulb)
 
 
-		// Switch:
+			// Switch:
 
-		let lightSwitch = TouchMeSprite(color: .gray, size: CGSize(width: 25, height: 50))
-		// Lightswitch will turn on lightbulb:
-		lightSwitch.othersToAnimate = [lightBulb]
+			let lightSwitch = TouchMeSprite(color: .gray, size: CGSize(width: 25, height: 50))
+			// Lightswitch will turn on lightbulb:
+			lightSwitch.othersToAnimate = [lightBulb]
 
-		lightSwitch.isUserInteractionEnabled = true
-		lightSwitch.position = CGPoint(x: 0, y: 250)
-		addChild(lightSwitch)
+			lightSwitch.isUserInteractionEnabled = true
+			lightSwitch.position = CGPoint(x: 0, y: 250)
+			addChild(lightSwitch)
+		}
+
 	}
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -120,7 +130,7 @@ class GameScene: SKScene {
 
 		let x = abs(
 			touches.first!.location(in: self).x
-			- touches.first!.previousLocation(in: self).x
+				- touches.first!.previousLocation(in: self).x
 		)
 
 		let y = x / frame.width
@@ -137,8 +147,8 @@ class GameScene: SKScene {
 		print( toucherSum / toucherCount.count)
 
 		touches.first!.location(in: self).x > touches.first!.previousLocation(in: self).x // Move right
-		? rotateClockwise()
-		: rotateCounterClock()
+			? clockwise()
+			: counterClockwise()
 	}
 
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
