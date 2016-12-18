@@ -9,68 +9,47 @@
 import SpriteKit
 import GameplayKit
 
-public extension SKNode {
-	func childNode(_ name: String) -> SKNode? {
-		return childNode(withName: name)
-	}
-}
-
-	class TouchMeSprite: SKSpriteNode {
-
-		// This is used for when another node is pressed... the animation THIS node will run:
-		var personalAnimation: SKAction?
-
-		// This is used when THIS node is clicked... the below nodes will run their `personalAnimation`:
-		var othersToAnimate: [TouchMeSprite]?
-
-		override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
-			// Early exit:
-			guard let sprites = othersToAnimate else {
-				print("No sprites to animate. Error?")
-				return
-			}
-
-			for sprite in sprites {
-
-				// Early exit:
-				if sprite.scene == nil {
-					print("sprite was nil, not running animation")
-					return
-				}
-
-				// Early exit:
-				guard let animation = sprite.personalAnimation else {
-					print("sprite had no animation")
-					return
-				}
-
-				sprite.run(animation)
-			}
-		}
-	}
-
+// MARK: - Props:
 
 class GameScene: SKScene {
 
-	var sensitivity = (min: 0.05, max: 0.45, cur: 0.2)
+	// Actual mins:
+	// 025 = 4  slow
+	// 05  = 2	normal
+	// .1  = 1	fast
+	var sensitivity = (min: 0.0125, max: 0.845, cur: 0.2)
+	var scaleFactor = CGFloat(7)
 
-	func editorNodes() -> (number: SKLabelNode, slider: SKSpriteNode, ball: SKSpriteNode) {
+	var toucherCount = [0]
+	var toucherSum = 0
+
+	var lastFramesTime = TimeInterval()
+	var dTime = TimeInterval()
+	var firstrun = true
+}
+
+
+// MARK: - Funcs:
+
+extension GameScene {
+
+	func editorNodes() -> (number: SKLabelNode, slider: SKSpriteNode) {
 		return (number: childNode(withName: "speed")!.childNode(withName: "number") as! SKLabelNode,
-		        slider: childNode(withName: "accel slider") as! SKSpriteNode,
-		        ball:		childNode(withName: "ball") as! SKSpriteNode
+		        slider: childNode(withName: "accel slider") as! SKSpriteNode
 		)
 	}
 
  func clockwise() {
-
 	childNode(withName: "base")!.zRotation -= CGFloat(sensitivity.cur)
 	}
-
- func counterClockwise() {
-	childNode(withName: "base")!.zRotation += CGFloat(sensitivity.cur)
+	func counterClockwise() {
+		childNode(withName: "base")!.zRotation += CGFloat(sensitivity.cur)
 	}
+	
+}
 
+// MARK: - Overrides:
+extension GameScene {
 
 	override func didMove(to: SKView) {
 		///**/ ball.run(.colorize(with: rightColor, colorBlendFactor: 1, duration: 0))
@@ -84,58 +63,48 @@ class GameScene: SKScene {
 				// FIXME: set up physics body to bounding circle
 				ball.texture!.usesMipmaps = true;								/**/ ball.setScale(0.5)
 			}
-		}
-		makeBalls()
-		
+		};	makeBalls()
+		editorNodes().slider.isUserInteractionEnabled = true
 	}
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
 	}
 
-
-	// MARK: - Math:
-
-
-
-	var toucherCount = [0]
-	var toucherSum = 0
-
-	var lastFramesTime = TimeInterval()
-	var dTime = TimeInterval()
-
 	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
 
-		let x = abs(
+		func spinNode() {
+					let x = abs(
 			touches.first!.location(in: self).x
 				- touches.first!.previousLocation(in: self).x
 		)
 
 		let y = x / frame.width
 		var zz = y / CGFloat(dTime)
-		zz/=2
+		zz/=scaleFactor
 
 		let z = Double(zz)
 		if z > sensitivity.max { sensitivity.cur = sensitivity.max }
 		else if z < sensitivity.min { sensitivity.cur = sensitivity.min }
 		else { sensitivity.cur = z }
 
+			print(zz)
+			print(sensitivity.cur)
+			print("\n")
 		toucherCount.append((1))
 		toucherSum += Int(z)
-		print( toucherSum / toucherCount.count)
+			// print( toucherSum / toucherCount.count)
 
 		touches.first!.location(in: self).x > touches.first!.previousLocation(in: self).x // Move right
 			? clockwise()
 			: counterClockwise()
+		}; spinNode()
 	}
 
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 		toucherCount = []
 		toucherSum = 0
 	}
-
-
-	var firstrun = true
 
 	override func update(_ currentTime: TimeInterval) {
 
