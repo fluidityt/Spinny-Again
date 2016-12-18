@@ -52,14 +52,20 @@ class GameScene: SKScene {
 
 	var sensitivity = (min: 0.05, max: 0.45, cur: 0.2)
 
+	func editorNodes() -> (number: SKLabelNode, slider: SKSpriteNode, ball: SKSpriteNode) {
+		return (number: childNode(withName: "speed")!.childNode(withName: "number") as! SKLabelNode,
+		        slider: childNode(withName: "accel slider") as! SKSpriteNode,
+		        ball:		childNode(withName: "ball") as! SKSpriteNode
+		)
+	}
 
  func clockwise() {
 
-	childNode(withName: "base")?.zRotation -= CGFloat(sensitivity.cur)
+	childNode(withName: "base")!.zRotation -= CGFloat(sensitivity.cur)
 	}
 
  func counterClockwise() {
-	childNode(withName: "base")?.zRotation += CGFloat(sensitivity.cur)
+	childNode(withName: "base")!.zRotation += CGFloat(sensitivity.cur)
 	}
 
 
@@ -67,23 +73,23 @@ class GameScene: SKScene {
 
 
 		func doIt() {
-			func initFromEditor() -> (number: SKLabelNode, slider: SKSpriteNode, ball: SKSpriteNode) {
-				return (number: childNode(withName: "speed")!.childNode(withName: "number") as! SKLabelNode,
-				        slider: childNode(withName: "accel slider") as! SKSpriteNode,
-				        ball:		childNode(withName: "ball") as! SKSpriteNode
-				)
+
+			func makeBalls() {
+				// Shape for us to change ball to:
+				let circle = SKShapeNode(circleOfRadius: 512)
+				circle.isAntialiased = true
+
+				// I have three balls in SKEditor named ball
+				var y = 50
+				let colors = ["cyan", "yellow", "pink"]; for color in colors {
+					let name = "ball" + " " + color; print ( name )
+					let ball = childNode(withName: name) as! SKSpriteNode
+					ball.texture = view!.texture(from: circle)!; ball.texture!.usesMipmaps = true
+					let rightColor = ball.color; ball.run(.colorize(with: rightColor, colorBlendFactor: 1, duration: 0))
+				}
 			}
-
-			let (num, slider, ball) = initFromEditor()
-
-			let circle = SKShapeNode(circleOfRadius: 50)
-			circle.fillColor = .white
-			let dot = SKSpriteNode(texture: view?.texture(from: circle)!)
-			dot.position.y -= 267
-
-			addChild(dot)
+			makeBalls()
 		}
-
 		doIt()
 
 		func makeLights() {
@@ -108,7 +114,7 @@ class GameScene: SKScene {
 			lightSwitch.position = CGPoint(x: 0, y: 250)
 			addChild(lightSwitch)
 		}
-
+		
 	}
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
