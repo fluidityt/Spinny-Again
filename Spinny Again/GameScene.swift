@@ -9,8 +9,11 @@
 import SpriteKit
 import GameplayKit
 
-
-
+public extension SKNode {
+	func childNode(_ name: String) -> SKNode? {
+		return childNode(withName: name)
+	}
+}
 
 	class TouchMeSprite: SKSpriteNode {
 
@@ -70,50 +73,19 @@ class GameScene: SKScene {
 
 
 	override func didMove(to: SKView) {
+		///**/ ball.run(.colorize(with: rightColor, colorBlendFactor: 1, duration: 0))
 
-
-		func doIt() {
-
-			func makeBalls() {
-				// Shape for us to change ball to:
-				let circle = SKShapeNode(circleOfRadius: 512)
-				circle.isAntialiased = true
-
-				// I have three balls in SKEditor named ball
-				var y = 50
-				let colors = ["cyan", "yellow", "pink"]; for color in colors {
-					let name = "ball" + " " + color; print ( name )
-					let ball = childNode(withName: name) as! SKSpriteNode
-					ball.texture = view!.texture(from: circle)!; ball.texture!.usesMipmaps = true
-					let rightColor = ball.color; ball.run(.colorize(with: rightColor, colorBlendFactor: 1, duration: 0))
-				}
+		func makeBalls() {
+			// Iterations of our EditorNodes
+			let colors = ["cyan", "yellow", "pink"];					/**/ for color in colors {
+				let name = "ball" + " " + color;								/**/ let ball = childNode(name) as! SKSpriteNode
+				let circle = SKShapeNode(circleOfRadius: 512);	/**/ circle.isAntialiased = true;
+				circle.fillColor = ball.color;						  		/**/ ball.texture = view!.texture(from: circle)!
+				// FIXME: set up physics body to bounding circle
+				ball.texture!.usesMipmaps = true;								/**/ ball.setScale(0.5)
 			}
-			makeBalls()
 		}
-		doIt()
-
-		func makeLights() {
-			// Bulb:
-
-			let lightBulb = TouchMeSprite(color: .black, size: CGSize(width: 100, height: 100))
-			// Lightbulb will turn on when you click lightswitch:
-			lightBulb.personalAnimation = SKAction.colorize(with: .yellow, colorBlendFactor: 1, duration: 0)
-
-			lightBulb.position = CGPoint(x: 0, y: 400)
-			lightBulb.isUserInteractionEnabled = true
-			addChild(lightBulb)
-
-
-			// Switch:
-
-			let lightSwitch = TouchMeSprite(color: .gray, size: CGSize(width: 25, height: 50))
-			// Lightswitch will turn on lightbulb:
-			lightSwitch.othersToAnimate = [lightBulb]
-
-			lightSwitch.isUserInteractionEnabled = true
-			lightSwitch.position = CGPoint(x: 0, y: 250)
-			addChild(lightSwitch)
-		}
+		makeBalls()
 		
 	}
 
@@ -172,6 +144,27 @@ class GameScene: SKScene {
 		lastFramesTime = currentTime
 	}
 }
+		/*func makeLights() {
+			// Bulb:
 
+			let lightBulb = TouchMeSprite(color: .black, size: CGSize(width: 100, height: 100))
+			// Lightbulb will turn on when you click lightswitch:
+			lightBulb.personalAnimation = SKAction.colorize(with: .yellow, colorBlendFactor: 1, duration: 0)
+
+			lightBulb.position = CGPoint(x: 0, y: 400)
+			lightBulb.isUserInteractionEnabled = true
+			addChild(lightBulb)
+
+
+			// Switch:
+
+			let lightSwitch = TouchMeSprite(color: .gray, size: CGSize(width: 25, height: 50))
+			// Lightswitch will turn on lightbulb:
+			lightSwitch.othersToAnimate = [lightBulb]
+
+			lightSwitch.isUserInteractionEnabled = true
+			lightSwitch.position = CGPoint(x: 0, y: 250)
+			addChild(lightSwitch)
+		}*/
 
 
