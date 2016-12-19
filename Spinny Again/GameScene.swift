@@ -14,24 +14,24 @@ import GameplayKit
 class GameScene: SKScene {
 
 	// Sliders:
-	 func minSlider()		 -> Slider { return childNode("ball cyan")   as! Slider }
-	 func maxSlider()	   -> Slider { return childNode("ball yellow") as! Slider }
-	 func divSlider()		 -> Slider { return childNode("ball pink")   as! Slider }
+	func minSlider()		 -> Slider { return childNode("slider cyan")   as! Slider }
+	func maxSlider()	   -> Slider { return childNode("slider yellow") as! Slider }
+	func divSlider()		 -> Slider { return childNode("slider pink")   as! Slider }
 
 	// Labels:
-	 func minLabel()			 -> SKLabelNode { return childNode("min") as! SKLabelNode }
-	 func maxLabel()			 -> SKLabelNode { return childNode("max") as! SKLabelNode }
-	 func divLabel()			 -> SKLabelNode { return childNode("div") as! SKLabelNode }
-	 func curLabel()			 -> SKLabelNode { return childNode("cur") as! SKLabelNode }
+	func minLabel()			 -> SKLabelNode { return childNode("min") as! SKLabelNode }
+	func maxLabel()			 -> SKLabelNode { return childNode("max") as! SKLabelNode }
+	func divLabel()			 -> SKLabelNode { return childNode("div") as! SKLabelNode }
+	func curLabel()			 -> SKLabelNode { return childNode("cur") as! SKLabelNode }
 
 	// Sensitivites:
-	 let sensitivityMinRef = (min: 0.006, max: 0.05 ),
-			sensitivityMaxRef = (min: 0.45,   max: 0.85),
-			sensitivityDivRef = (min: 12.0,    max: 2.0  )
+	let sensitivityMinRef = (min: 0.006, max: 0.05 ),
+	sensitivityMaxRef = (min: 0.45,   max: 0.85),
+	sensitivityDivRef = (min: 12.0,    max: 2.0  )
 
-	 var sensitivity = (minCur: 0.006,
-	                   maxCur: 0.45,
-	                   divCur: 12.0,
+	var sensitivity = (minCur: 0.006,
+	                   maxCur: 0.85,
+	                   divCur: 6.0,
 	                   curCur: 0.2)
 
 	func doSliders() {
@@ -82,23 +82,37 @@ class GameScene: SKScene {
 	}
 
 	// Spinning:
-  var lastFramesTime = TimeInterval()
+	var lastFramesTime = TimeInterval()
 	var dTime = TimeInterval()
 	var firstrun = true
+
+	// Enemies:
+	func ballCyan() -> SKSpriteNode {
+		return childNode("ball cyan")		as! SKSpriteNode
 	}
+	func ballYellow() -> SKSpriteNode {
+		return childNode("ball yellow")  as! SKSpriteNode
+	}
+	func ballPink() -> SKSpriteNode{
+		return childNode("ball pink") as! SKSpriteNode
+	}
+	func bkg() -> SKShapeNode { return childNode("bkg") as! SKShapeNode }
+
+}
+
 
 // DMV:
 extension GameScene {
-private func makeBalls() {
-			// Iterations of our EditorNodes
-			let colors = ["cyan", "yellow", "pink"];					/**/ for color in colors {
-				let name = "ball" + " " + color;								/**/ let ball = childNode(name) as! SKSpriteNode
-				let circle = SKShapeNode(circleOfRadius: 512);	/**/ circle.isAntialiased = true;
-				circle.fillColor = ball.color;						  		/**/ ball.texture = view!.texture(from: circle)!
-				// FIXME: set up physics body to bounding circle
-				ball.texture!.usesMipmaps = true;								/**/ ball.setScale(0.5)
-			}
+	private func makeBalls() {
+		// Iterations of our EditorNodes
+		let colors = ["cyan", "yellow", "pink"];					/**/ for color in colors {
+			let name = "ball" + " " + color;								/**/ let ball = childNode(name) as! SKSpriteNode
+			let circle = SKShapeNode(circleOfRadius: 512);	/**/ circle.isAntialiased = true;
+			circle.fillColor = ball.color;						  		/**/ ball.texture = view!.texture(from: circle)!
+			// FIXME: set up physics body to bounding circle
+			ball.texture!.usesMipmaps = true;								/**/ ball.setScale(0.5)
 		}
+	}
 
 	override func didMove(to: SKView) {
 
@@ -158,38 +172,108 @@ extension GameScene {
 
 // Update:
 extension GameScene {
+
+	enum time {
+		static var ticks   = 0
+		static var seconds = 0
+	}
+
+	private func spawn() {
+		// Pick random color:
+		func randomColorSprite() -> SKSpriteNode {
+			let result = arc4random_uniform(99)
+
+			if result > 66 { return ballCyan() }
+			if result < 33 { return ballYellow() }
+			return ballPink()
+		}
+
+
+		// Pick random side to spawn from:
+		enum Sides { case top, left, bottom, right }
+		func randomSideToSpawnOn() -> Sides {
+			let result = arc4random_uniform(99)
+			switch result {
+				case 0...25 : return Sides.top
+				case 26...50: return Sides.right
+				case 51...75: return Sides.bottom
+				default:	return Sides.left
+			}
+		}
+
+		// Pick random X and Y location on BKG border:
+		func randomBkgBorderPos(side: Sides) -> CGPoint {
+			// God I hate the RNG gods...
+			let randomX = CGFloat(arc4random_uniform(UInt32(bkg().frame.width)))
+			let randomY = CGFloat(arc4random_uniform(UInt32(bkg().frame.height)))
+
+			// Make sure that this isn't weird
+			print(randomX, randomY)
+			// FIXME: adjust for offset...
+			switch side {
+				case .top:	  return CGPoint(x: randomX, y: bkg().frame.maxY)
+				case .right:  return CGPoint(x: bkg().frame.maxX, y: randomY)
+				case .bottom: return CGPoint(x: randomX, y: bkg().frame.minY)
+				case .left:		return CGPoint(x: bkg().frame.minX, y: randomY)
+			}
+		}
+
+
+		// Set right node to location:
+		let rightNode = randomColorSprite()
+		rightNode.position = randomBkgBorderPos(side: randomSideToSpawnOn())
+
+		// Set node to move to center:
+		rightNode.run(.move(to: bkg().center(), duration: 2),
+		              completion: {
+										rightNode.run(.move(to: { self.childNode("pergatory")! as! SKLabelNode}().position, duration: 0))})
+	}
+
 	override func update(_ currentTime: TimeInterval) {
 
-		if firstrun { lastFramesTime = currentTime; firstrun = false; return }
+		// Initial stuff:
+		if firstrun {
+			lastFramesTime = currentTime
+			firstrun = false
+			return
+		}
 
-		dTime = currentTime - lastFramesTime
+		// Time stuff:
+		dTime					 = (currentTime - lastFramesTime)
 		lastFramesTime = currentTime
 
-		doSliders()
+		// Sliders:
+		// FIXME: Set up dispatch
+		//doSliders()
+
+		// Spawners:
+		time.ticks += 1; if time.ticks >= 60 { time.seconds += 1; time.ticks = 0 }; if time.seconds >= 3 { time.seconds = 0
+			spawn()
+		}
 	}
 }
 
-		/*func makeLights() {
-			// Bulb:
+/*func makeLights() {
+// Bulb:
 
-			let lightBulb = TouchMeSprite(color: .black, size: CGSize(width: 100, height: 100))
-			// Lightbulb will turn on when you click lightswitch:
-			lightBulb.personalAnimation = SKAction.colorize(with: .yellow, colorBlendFactor: 1, duration: 0)
+let lightBulb = TouchMeSprite(color: .black, size: CGSize(width: 100, height: 100))
+// Lightbulb will turn on when you click lightswitch:
+lightBulb.personalAnimation = SKAction.colorize(with: .yellow, colorBlendFactor: 1, duration: 0)
 
-			lightBulb.position = CGPoint(x: 0, y: 400)
-			lightBulb.isUserInteractionEnabled = true
-			addChild(lightBulb)
+lightBulb.position = CGPoint(x: 0, y: 400)
+lightBulb.isUserInteractionEnabled = true
+addChild(lightBulb)
 
 
-			// Switch:
+// Switch:
 
-			let lightSwitch = TouchMeSprite(color: .gray, size: CGSize(width: 25, height: 50))
-			// Lightswitch will turn on lightbulb:
-			lightSwitch.othersToAnimate = [lightBulb]
+let lightSwitch = TouchMeSprite(color: .gray, size: CGSize(width: 25, height: 50))
+// Lightswitch will turn on lightbulb:
+lightSwitch.othersToAnimate = [lightBulb]
 
-			lightSwitch.isUserInteractionEnabled = true
-			lightSwitch.position = CGPoint(x: 0, y: 250)
-			addChild(lightSwitch)
-		}*/
+lightSwitch.isUserInteractionEnabled = true
+lightSwitch.position = CGPoint(x: 0, y: 250)
+addChild(lightSwitch)
+}*/
 
 

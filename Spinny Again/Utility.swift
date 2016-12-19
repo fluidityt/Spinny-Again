@@ -11,4 +11,8 @@ public extension SKNode {
 	func childNode(_ name: String) -> SKNode? {
 		return childNode(withName: name)
 	}
+
+	func center() -> CGPoint {
+		return CGPoint(x: frame.midX, y: frame.midY)
+	}
 }
