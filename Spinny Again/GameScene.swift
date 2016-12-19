@@ -72,11 +72,13 @@ class GameScene: SKScene {
 		setMinToSlider()
 		setMaxToSlider()
 		setDivToSlider()
-		minLabel().text = "min: " + String(Int(sensitivity.minCur*1000))
-		maxLabel().text = "max: " + String(Int(sensitivity.maxCur*1000))
-		divLabel().text = "div: " + String(Int(sensitivity.divCur))
 
+		// Make numbers more human readable:
 		curLabel().text = "Current: " + String(Int(sensitivity.curCur*1000))
+		minLabel().text = "min: "			+ String(Int(sensitivity.minCur*1000))
+		maxLabel().text = "max: "			+ String(Int(sensitivity.maxCur*1000))
+		divLabel().text = "div: "			+ String(Int(sensitivity.divCur))
+
 	}
 
 	// Spinning:
