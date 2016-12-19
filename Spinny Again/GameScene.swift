@@ -13,87 +13,81 @@ import GameplayKit
 // Propfuncs:
 class GameScene: SKScene {
 
-	func minSlider()		 -> Slider { return childNode("ball cyan")   as! Slider }
-	func maxSlider()	   -> Slider { return childNode("ball yellow") as! Slider }
-	func divSlider()		 -> Slider { return childNode("ball pink")   as! Slider }
+	// Sliders:
+	 func minSlider()		 -> Slider { return childNode("ball cyan")   as! Slider }
+	 func maxSlider()	   -> Slider { return childNode("ball yellow") as! Slider }
+	 func divSlider()		 -> Slider { return childNode("ball pink")   as! Slider }
 
-	func minLabel()			 -> SKLabelNode { return childNode("min") as! SKLabelNode }
-	func maxLabel()			 -> SKLabelNode { return childNode("max") as! SKLabelNode }
-	func divLabel()			 -> SKLabelNode { return childNode("div") as! SKLabelNode }
+	// Labels:
+	 func minLabel()			 -> SKLabelNode { return childNode("min") as! SKLabelNode }
+	 func maxLabel()			 -> SKLabelNode { return childNode("max") as! SKLabelNode }
+	 func divLabel()			 -> SKLabelNode { return childNode("div") as! SKLabelNode }
+	 func curLabel()			 -> SKLabelNode { return childNode("cur") as! SKLabelNode }
 
-	let sensitivityMinRef = (min: 0.0125, max: 0.05 ),
-			sensitivityMaxRef = (min: 0.45,   max: 0.845),
-			sensitivityDivRef = (min: 8.0,    max: 2.0  )
+	// Sensitivites:
+	 let sensitivityMinRef = (min: 0.006, max: 0.05 ),
+			sensitivityMaxRef = (min: 0.45,   max: 0.85),
+			sensitivityDivRef = (min: 12.0,    max: 2.0  )
 
-	var sensitivity = (minCur: 0.0125,
-	                   maxCur: 0.845,
-	                   divCur: 2.0,
+	 var sensitivity = (minCur: 0.006,
+	                   maxCur: 0.45,
+	                   divCur: 12.0,
 	                   curCur: 0.2)
 
-	func setMinToSlider() {
-		guard let percent = minSlider().currentPercent else { return }
-		let (min, max) = (sensitivityMinRef.min, sensitivityMinRef.max)
-		if min == Double(percent) { return }
+	func doSliders() {
 
-		sensitivity.minCur =
-			min
-			+ (max - min)
-			* (Double(percent) / 100)
+		func setMinToSlider() {
+			guard let percent = minSlider().currentPercent else { return }
+			let (min, max) = (sensitivityMinRef.min, sensitivityMinRef.max)
+			if min == Double(percent) { return }
+
+			sensitivity.minCur =
+				min
+				+ (max - min)
+				* (Double(percent) / 100)
+		}
+
+		func setMaxToSlider() {
+			guard let percent = maxSlider().currentPercent else { return }
+			let (min, max) = (sensitivityMaxRef.min, sensitivityMaxRef.max)
+			if min == Double(percent) { return }
+
+			sensitivity.maxCur =
+				min
+				+ (max - min)
+				* (Double(percent) / 100)
+		}
+
+		func setDivToSlider() {
+			guard let percent = divSlider().currentPercent else { return }
+			let (min, max) = (sensitivityDivRef.min, sensitivityDivRef.max)
+			if min == Double(percent) { return }
+
+			sensitivity.divCur =
+				min
+				+ (max - min)
+				* (Double(percent) / 100)
+		}
+
+		setMinToSlider()
+		setMaxToSlider()
+		setDivToSlider()
+		minLabel().text = "min: " + String(Int(sensitivity.minCur*1000))
+		maxLabel().text = "max: " + String(Int(sensitivity.maxCur*1000))
+		divLabel().text = "div: " + String(Int(sensitivity.divCur))
+
+		curLabel().text = "Current: " + String(Int(sensitivity.curCur*1000))
 	}
 
-	func setMaxToSlider() {
-		guard let percent = maxSlider().currentPercent else { return }
-		let (min, max) = (sensitivityMaxRef.min, sensitivityMaxRef.max)
-		if min == Double(percent) { return }
-
-		sensitivity.maxCur =
-			min
-			+ (max - min)
-			* (Double(percent) / 100)
-	}
-
-	func setDivToSlider() {
-		guard let percent = divSlider().currentPercent else { return }
-		let (min, max) = (sensitivityDivRef.min, sensitivityDivRef.max)
-		if min == Double(percent) { return }
-
-		sensitivity.divCur =
-			min
-			+ (max - min)
-			* (Double(percent) / 100)
-	}
-
-	// Actual mins:
-	// 025 = 4  slow
-	// 05  = 2	normal
-	// .1  = 1	fast
-	var scaleFactor = CGFloat(7)
-
-	var toucherCount = [0]
-	var toucherSum = 0
-
-	var lastFramesTime = TimeInterval()
+	// Spinning:
+  var lastFramesTime = TimeInterval()
 	var dTime = TimeInterval()
 	var firstrun = true
-
-
- func clockwise() {
-	childNode(withName: "base")!.zRotation -= CGFloat(sensitivity.curCur)
 	}
-
-	func counterClockwise() {
-		childNode(withName: "base")!.zRotation += CGFloat(sensitivity.curCur)
-	}
-	
-}
 
 // DMV:
 extension GameScene {
-
-	override func didMove(to: SKView) {
-		///**/ ball.run(.colorize(with: rightColor, colorBlendFactor: 1, duration: 0))
-
-		func makeBalls() {
+private func makeBalls() {
 			// Iterations of our EditorNodes
 			let colors = ["cyan", "yellow", "pink"];					/**/ for color in colors {
 				let name = "ball" + " " + color;								/**/ let ball = childNode(name) as! SKSpriteNode
@@ -102,53 +96,60 @@ extension GameScene {
 				// FIXME: set up physics body to bounding circle
 				ball.texture!.usesMipmaps = true;								/**/ ball.setScale(0.5)
 			}
-		};	makeBalls()
+		}
+
+	override func didMove(to: SKView) {
+
+		makeBalls()
 
 		minSlider().initialize(leftBoundary: frame.minX, rightBoundary: frame.maxX)
 		maxSlider().initialize(leftBoundary: frame.minX, rightBoundary: frame.maxX)
 		divSlider().initialize(leftBoundary: frame.minX, rightBoundary: frame.maxX)
+
+		doSliders()
+
+		print(sensitivity.minCur)
+		print(sensitivity.maxCur)
+		print(sensitivity.divCur)
 	}
 }
 
 // Touches:
 extension GameScene {
 
-	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
-	}
 	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-
-		func spinNode() {
+		// FIXME: Refac to pure:
+		func setSensDotCur() {
 			let x = abs(
 				touches.first!.location(in: self).x
-				- touches.first!.previousLocation(in: self).x
-		)
+					- touches.first!.previousLocation(in: self).x
+			)
 
-		let y = x / frame.width
-		var zz = y / CGFloat(dTime)
-		zz /= CGFloat(sensitivity.divCur)
+			let y = x / frame.width
+			var zz = y / CGFloat(dTime)
+			zz /= CGFloat(sensitivity.divCur)
 
-		let z = Double(zz)
-		if z > sensitivity.maxCur			 { sensitivity.curCur = sensitivity.maxCur }
-		else if z < sensitivity.minCur { sensitivity.curCur = sensitivity.minCur }
-		else { sensitivity.curCur = z }
+			let z = Double(zz)
+			if z > sensitivity.maxCur			 { sensitivity.curCur = sensitivity.maxCur }
+			else if z < sensitivity.minCur { sensitivity.curCur = sensitivity.minCur }
+			else { sensitivity.curCur = z }
+		}
+		func spinClockwise() {
+			childNode("base")!.zRotation -= CGFloat(sensitivity.curCur)
+		}
+		func spinCounterClockwise() {
 
-			//	print(zz)
-			print(sensitivity.curCur)
-			//print("\n")*/
-		toucherCount.append((1))
-		toucherSum += Int(z)
-			// print( toucherSum / toucherCount.count)
+			childNode("base")!.zRotation += CGFloat(sensitivity.curCur)
+		}
 
+
+
+		// Implement:
+		setSensDotCur()
 		touches.first!.location(in: self).x > touches.first!.previousLocation(in: self).x // Move right
-			? clockwise()
-			: counterClockwise()
-		}; spinNode()
-	}
-
-	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-		toucherCount = []
-		toucherSum = 0
+			? spinClockwise()
+			: spinCounterClockwise()
+		print(sensitivity.curCur)
 	}
 
 }
@@ -158,34 +159,14 @@ extension GameScene {
 	override func update(_ currentTime: TimeInterval) {
 
 		if firstrun { lastFramesTime = currentTime; firstrun = false; return }
+
 		dTime = currentTime - lastFramesTime
 		lastFramesTime = currentTime
 
-		//		sensitivity.max = maxSlider().currentPercent
-		setMinToSlider()
-		setMaxToSlider()
-		setDivToSlider()
-
-		if minLabel().text != String(sensitivity.minCur) {
-			minLabel().text = "min: " + String(sensitivity.minCur)
-			//			print("min: ", sensitivity.minCur)
-
-			}
-
-		if maxLabel().text != String(sensitivity.maxCur) {
-			maxLabel().text = "max: " + String(sensitivity.maxCur)
-			// print("max: ", sensitivity.maxCur)
-
-			}
-
-		if divLabel().text != String(sensitivity.divCur) {
-			divLabel().text = String(sensitivity.divCur)
-			// print("div: ", sensitivity.divCur)
-
-			}
-
+		doSliders()
 	}
 }
+
 		/*func makeLights() {
 			// Bulb:
 
