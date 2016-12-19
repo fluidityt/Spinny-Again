@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Spinny Again/GameScene.swift"
-            timestampString = "503809947.19696"
+            timestampString = "503811183.905908"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "112"
-            endingLineNumber = "112"
+            startingLineNumber = "141"
+            endingLineNumber = "141"
             landmarkName = "spinNode()"
             landmarkType = "9">
          </BreakpointContent>
