@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C13894001E063CA00061F7E6 /* Clicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13893FF1E063CA00061F7E6 /* Clicker.swift */; };
+		C13894001E063CA00061F7E6 /* Slider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13893FF1E063CA00061F7E6 /* Slider.swift */; };
 		C13894021E063DF00061F7E6 /* TouchMeSprite.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13894011E063DF00061F7E6 /* TouchMeSprite.swift */; };
 		C13894041E063E0A0061F7E6 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13894031E063E0A0061F7E6 /* Utility.swift */; };
 		C17897E71E01E84F00E6B868 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17897E61E01E84F00E6B868 /* AppDelegate.swift */; };
@@ -22,7 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C13893FF1E063CA00061F7E6 /* Clicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Clicker.swift; sourceTree = "<group>"; };
+		C13893FF1E063CA00061F7E6 /* Slider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Slider.swift; sourceTree = "<group>"; };
 		C13894011E063DF00061F7E6 /* TouchMeSprite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchMeSprite.swift; sourceTree = "<group>"; };
 		C13894031E063E0A0061F7E6 /* Utility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		C17897E31E01E84F00E6B868 /* Spinny Again.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Spinny Again.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -72,7 +72,7 @@
 				C17897FE1E01EA1F00E6B868 /* junk */,
 				C17897E81E01E84F00E6B868 /* GameScene.sks */,
 				C17897EC1E01E84F00E6B868 /* GameScene.swift */,
-				C13893FF1E063CA00061F7E6 /* Clicker.swift */,
+				C13893FF1E063CA00061F7E6 /* Slider.swift */,
 				C13894011E063DF00061F7E6 /* TouchMeSprite.swift */,
 				C13894031E063E0A0061F7E6 /* Utility.swift */,
 				C17897F31E01E84F00E6B868 /* Assets.xcassets */,
@@ -173,7 +173,7 @@
 				C17897ED1E01E84F00E6B868 /* GameScene.swift in Sources */,
 				C13894021E063DF00061F7E6 /* TouchMeSprite.swift in Sources */,
 				C13894041E063E0A0061F7E6 /* Utility.swift in Sources */,
-				C13894001E063CA00061F7E6 /* Clicker.swift in Sources */,
+				C13894001E063CA00061F7E6 /* Slider.swift in Sources */,
 				C17897EF1E01E84F00E6B868 /* GameViewController.swift in Sources */,
 				C17897E71E01E84F00E6B868 /* AppDelegate.swift in Sources */,
 			);

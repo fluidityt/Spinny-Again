@@ -9,15 +9,41 @@
 import SpriteKit
 import GameplayKit
 
-// MARK: - Props:
 
+// Propfuncs:
 class GameScene: SKScene {
+
+	func minSlider()		 -> Slider { return childNode("ball cyan")   as! Slider }
+	func maxSlider()	   -> Slider { return childNode("ball yellow") as! Slider }
+	func curSlider()		 -> Slider { return childNode("ball pink")   as! Slider }
+
+	func minLabel()			 -> SKLabelNode { return childNode("min") as! SKLabelNode }
+	func maxLabel()			 -> SKLabelNode { return childNode("max") as! SKLabelNode }
+	func curLabel()			 -> SKLabelNode { return childNode("cur") as! SKLabelNode }
+
+	let sensitivityMinRef = (min: 0.0125, max: 0.05 ),
+			sensitivityMaxRef = (min: 0.45,   max: 0.845),
+			sensitivityCurRef = (min: 8.0,    max: 2.0  )
+
+	var sensitivity = (minCur: 0.0125,
+	                   maxCur: 0.845,
+	                   cur: 0.2)
+
+	func setMinToSlider() {
+		guard let percent = minSlider().currentPercent else { return }
+		let (min, max) = (sensitivityMinRef.min, sensitivityMinRef.max)
+		if min == Double(percent) { return }
+
+		sensitivity.minCur =
+			min
+			+ (max - min)
+			* (Double(percent) / 100)
+	}
 
 	// Actual mins:
 	// 025 = 4  slow
 	// 05  = 2	normal
 	// .1  = 1	fast
-	var sensitivity = (min: 0.0125, max: 0.845, cur: 0.2)
 	var scaleFactor = CGFloat(7)
 
 	var toucherCount = [0]
@@ -26,29 +52,19 @@ class GameScene: SKScene {
 	var lastFramesTime = TimeInterval()
 	var dTime = TimeInterval()
 	var firstrun = true
-}
 
-
-// MARK: - Funcs:
-
-extension GameScene {
-
-	func editorNodes() -> (number: SKLabelNode, slider: SKSpriteNode) {
-		return (number: childNode(withName: "speed")!.childNode(withName: "number") as! SKLabelNode,
-		        slider: childNode(withName: "accel slider") as! SKSpriteNode
-		)
-	}
 
  func clockwise() {
 	childNode(withName: "base")!.zRotation -= CGFloat(sensitivity.cur)
 	}
+
 	func counterClockwise() {
 		childNode(withName: "base")!.zRotation += CGFloat(sensitivity.cur)
 	}
 	
 }
 
-// MARK: - Overrides:
+// DMV:
 extension GameScene {
 
 	override func didMove(to: SKView) {
@@ -64,33 +80,39 @@ extension GameScene {
 				ball.texture!.usesMipmaps = true;								/**/ ball.setScale(0.5)
 			}
 		};	makeBalls()
-		editorNodes().slider.isUserInteractionEnabled = true
+
+		minSlider().initialize(leftBoundary: frame.minX, rightBoundary: frame.maxX)
+		maxSlider().initialize(leftBoundary: frame.minX, rightBoundary: frame.maxX)
+		curSlider().initialize(leftBoundary: frame.minX, rightBoundary: frame.maxX)
 	}
+}
+
+// Touches:
+extension GameScene {
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
 	}
-
 	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
 
 		func spinNode() {
-					let x = abs(
-			touches.first!.location(in: self).x
+			let x = abs(
+				touches.first!.location(in: self).x
 				- touches.first!.previousLocation(in: self).x
 		)
 
 		let y = x / frame.width
 		var zz = y / CGFloat(dTime)
-		zz/=scaleFactor
+		zz /= scaleFactor
 
 		let z = Double(zz)
-		if z > sensitivity.max { sensitivity.cur = sensitivity.max }
-		else if z < sensitivity.min { sensitivity.cur = sensitivity.min }
+		if z > sensitivity.maxCur			 { sensitivity.cur = sensitivity.maxCur }
+		else if z < sensitivity.minCur { sensitivity.cur = sensitivity.minCur }
 		else { sensitivity.cur = z }
 
-			print(zz)
+			//	print(zz)
 			print(sensitivity.cur)
-			print("\n")
+			//print("\n")*/
 		toucherCount.append((1))
 		toucherSum += Int(z)
 			// print( toucherSum / toucherCount.count)
@@ -106,11 +128,24 @@ extension GameScene {
 		toucherSum = 0
 	}
 
+}
+
+// Update:
+extension GameScene {
 	override func update(_ currentTime: TimeInterval) {
 
 		if firstrun { lastFramesTime = currentTime; firstrun = false; return }
 		dTime = currentTime - lastFramesTime
 		lastFramesTime = currentTime
+
+		//		sensitivity.max = maxSlider().currentPercent
+		setMinToSlider()
+		if minLabel().text != String(sensitivity.minCur) {
+			minLabel().text = String(sensitivity.minCur)
+			print("min: ", sensitivity.minCur)
+
+			}
+
 	}
 }
 		/*func makeLights() {
